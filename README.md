@@ -16,3 +16,31 @@ $ conda create -n mini-rag-app python=3.11
 ```bash
 $ conda activate mini-rag-app
 ```
+
+### (Optional) Setup you command line interface for better readability
+```bash
+export PS1="\[\033[01;32m\]\u@\h:\w\n\[\033[00m\]\$ "
+```
+
+## Installation 
+
+### Install the required packages
+
+```bash
+$ pip install -r requirments.txt
+```
+
+### Setup the environment variable
+```bash 
+$ cp .env.example .env
+```
+
+Set your environment variable in the `env` file like `OPENAI_API_KEY` value.
+
+## Run the FastAPI server
+```bash 
+$ uvicorn main:app --reload 0.0.0.0 ---port 5000
+```
+
+Dowanlod the POSTMAN from [https://www.postman.com/downloads/]
+Dawnload the POSTMAN collections from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)

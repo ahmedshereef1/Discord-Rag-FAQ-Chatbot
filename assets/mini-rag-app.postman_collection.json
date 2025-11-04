@@ -1,0 +1,58 @@
+{
+	"info": {
+		"_postman_id": "5eb4b87f-d9d2-4c62-a8d6-78e7253f5926",
+		"name": "mini-rag-app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37722950",
+		"_collection_link": "https://warped-firefly-58228.postman.co/workspace/API-Course~108ab322-c0b7-4547-8935-f6ebf0fc79f1/collection/37722950-5eb4b87f-d9d2-4c62-a8d6-78e7253f5926?action=share&source=collection_link&creator=37722950"
+	},
+	"item": [
+		{
+			"name": "welcome-request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/welcome",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"welcome"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api",
+			"value": ""
+		}
+	]
+}
