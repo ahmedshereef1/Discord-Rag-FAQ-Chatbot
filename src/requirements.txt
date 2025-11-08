@@ -8,4 +8,5 @@ langchain==1.0.3
 langchain-community==0.4.1
 PyMuPDF==1.26.6
 langchain-text-splitters==1.0.0
-
+motor==3.7.1
+pymongo==4.15.3
