@@ -52,5 +52,5 @@ $ cp .env.example .env
 $ uvicorn main:app --reload 0.0.0.0 ---port 5000
 ```
 
-Dowanlod the POSTMAN from [https://www.postman.com/downloads/]
-Dawnload the POSTMAN collections from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json)
+Download Postman from [https://www.postman.com/downloads/].  
+Download the Postman collection from [/assets/mini-rag-app.postman_collection.json](/assets/mini-rag-app.postman_collection.json).
