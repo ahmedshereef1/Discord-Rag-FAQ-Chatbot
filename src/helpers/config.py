@@ -32,7 +32,12 @@ class Settings(BaseSettings):
     # Mongo
     MONGO_URL: str
     MONGO_DB_NAME: str
-    
+
+    # Vector DB Qdrant 
+    VECTOR_DB_BACKEND = str
+    VECTOR_DB_PATH = str
+    VECTOR_DB_DISTANCE_METHOD = str
+
     class Config:
         env_file = ".env"
 
