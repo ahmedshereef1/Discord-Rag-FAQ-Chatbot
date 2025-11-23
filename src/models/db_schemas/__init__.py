@@ -7,5 +7,5 @@
 
 # This imports for Postgres
 
-from .minirag.schemes import Project
-from .minirag.schemes import Asset , DataChunk , RetrievedDocument
+from models.db_schemas.minirag.schemes import Project
+from models.db_schemas.minirag.schemes import Asset , DataChunk , RetrievedDocument
