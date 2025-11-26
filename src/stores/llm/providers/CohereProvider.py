@@ -2,7 +2,7 @@ from ..LLMInterface import LLMInterface
 from ..LLMEnums import CohereEnums, DocumentTypeEnums
 import cohere  # pyright: ignore[reportMissingImports]
 import logging
-from typing import Optional, List
+from typing import Optional, List, Union
 
 
 class CohereProvider(LLMInterface):
@@ -92,10 +92,13 @@ class CohereProvider(LLMInterface):
         self.logger.error("Unexpected response shape from Cohere chat: %r", response)
         return None
 
-    def embed_text(self, text: str, document_type: str = None) -> Optional[List[float]]:
+    def embed_text(self, text: Union[str, List[str]], document_type: str = None) -> Optional[List[float]]:
         if not self.client:
             self.logger.error("Cohere client was not initialized")
             return None
+
+        if isinstance(text, str):
+            text = [text]
 
         if not self.embedding_model_id:
             self.logger.error("Embedding model for Cohere was not set")
@@ -105,8 +108,10 @@ class CohereProvider(LLMInterface):
         if document_type == DocumentTypeEnums.QUERY:
             input_type = CohereEnums.QUERY
 
-        # prepare text and short-circuit empty input
-        processed = self.process_text(text)
+        # FIX 1: process each text individually
+        processed = [self.process_text(t) for t in text]
+        processed = [p for p in processed if p]  
+
         if not processed:
             self.logger.error("Empty text after processing")
             return None
@@ -114,7 +119,7 @@ class CohereProvider(LLMInterface):
         try:
             response = self.client.embed(
                 model=self.embedding_model_id,
-                texts=[processed],
+                texts=processed,  
                 input_type=input_type,
                 embedding_types=["float"],
             )
@@ -127,22 +132,29 @@ class CohereProvider(LLMInterface):
         try:
             if hasattr(response, "embeddings"):
                 emb = response.embeddings
+
+                # FIX 3: extract all embeddings from list
                 if isinstance(emb, list) and len(emb) > 0:
-                    first = emb[0]
-                    if hasattr(first, "embedding"):
-                        return first.embedding
-                    if hasattr(first, "float"):
-                        return first.float
+                    result = []
+                    for item in emb:
+                        if hasattr(item, "float"):
+                            result.append(item.float)
+                        elif hasattr(item, "embedding"):
+                            result.append(item.embedding)
+                    if result:
+                        return result
+
+                # FIX 4: return all embeddings, not just first
                 if getattr(emb, "float", None):
                     fl = emb.float
                     if isinstance(fl, list) and len(fl) > 0:
-                        return fl[0]
+                        return fl  # Return all, not fl[0]
         except Exception as e:
             self.logger.debug("Failed to extract embedding: %s", e)
 
         self.logger.error("Unexpected response shape from Cohere embed: %r", response)
         return None
-
+    
     def construct_prompt(self, prompt: str, role: str):
         return {
             "role": role,

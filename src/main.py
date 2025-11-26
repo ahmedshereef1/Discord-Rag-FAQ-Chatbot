@@ -7,9 +7,12 @@ from stores.vectordb.VectorDBProviderInterface import VectorDBProviderInterface
 from stores.llm.templates.template_parser import TemplateParser
 from sqlalchemy.ext.asyncio import create_async_engine ,AsyncSession
 from sqlalchemy.orm import sessionmaker
+import logging
 
 app = FastAPI()
 
+app.logger = logging.getLogger("app")
+app.logger.setLevel(logging.INFO)
 
 # -----------------------------
 # Startup event
@@ -31,7 +34,8 @@ async def startup_span():
 
     # Factories
     llm_provider_factory = LLMProviderFactory(settings)
-    vectordb_provider_factory = VectorDBProviderInterface(settings)
+    vectordb_provider_factory = VectorDBProviderInterface(config=settings,
+                                                          db_client=app.db_client)
 
     # Generation client
     app.generation_client = llm_provider_factory.create(
@@ -60,9 +64,9 @@ async def startup_span():
 
     # Vector DB client
     app.vectordb_client = vectordb_provider_factory.create(
-        provider=settings.VECTOR_DB_BACKEND
+        provider=settings.VECTOR_DB_BACKEND 
     )
-    app.vectordb_client.connect()
+    await app.vectordb_client.connect()
 
     app.template_parser = TemplateParser(
         language=settings.PRIMARY_LANG,
@@ -76,8 +80,8 @@ async def startup_span():
 @app.on_event("shutdown")
 async def shutdown_span():
     # app.mongo_conn.close()
-    app.db_engine.dispose()
-    app.vectordb_client.disconnect()
+    await app.db_engine.dispose()
+    await app.vectordb_client.disconnect()
 
 
 # -----------------------------

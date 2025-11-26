@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List , Optional
 
 class Settings(BaseSettings):
     APP_NAME: str
@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     COHERE_API_KEY: str | None = None
 
     # Model IDs
-    GENERATION_MODEL_ID_LITERAL = List[str] = None
+    GENERATION_MODEL_ID_LITERAL : Optional[List[str]] = None
     GENERATION_MODEL_ID: str
     EMBEDDING_MODEL_ID: str
     EMBEDDING_MODEL_SIZE: int
@@ -35,10 +35,11 @@ class Settings(BaseSettings):
     MONGO_DB_NAME: str
 
     # Vector DB Qdrant 
-    VECTOR_DB_BACKEND_LITERAL = List[str] = None
-    VECTOR_DB_BACKEND: str = "QDRANT"  
-    VECTOR_DB_PATH: str = "qdrant_db"
-    VECTOR_DB_DISTANCE_METHOD: str = "cosine"
+    VECTOR_DB_BACKEND_LITERAL : Optional[List[str]] = None
+    VECTOR_DB_BACKEND: str  
+    VECTOR_DB_PATH: str 
+    VECTOR_DB_DISTANCE_METHOD: str 
+    VECTOR_DB_PGVEC_INDEX_THRESHOLD: int
 
     # Template 
     DEFAULT_LANG : str = "en"
