@@ -134,5 +134,13 @@ services:
       pgvector:
         condition: service_healthy
 
+networks:
+  backend:
+    driver: bridge
 
-      
+volumes:
+  fastapi_data:
+  pgvector:
+  qdrant_data:
+  prometheus_data:
+  grafana_data:
