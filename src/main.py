@@ -8,8 +8,11 @@ from stores.llm.templates.template_parser import TemplateParser
 from sqlalchemy.ext.asyncio import create_async_engine ,AsyncSession
 from sqlalchemy.orm import sessionmaker
 import logging
+from utils.metrics import setup_metrics
 
 app = FastAPI()
+
+setup_metrics(app=app)
 
 app.logger = logging.getLogger("app")
 app.logger.setLevel(logging.INFO)
