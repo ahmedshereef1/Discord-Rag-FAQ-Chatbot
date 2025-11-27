@@ -8,7 +8,7 @@ REQUEST_LATENCY = Histogram('http_request_duration_seconds', 'HTTP Request Laten
 
 class PrometheusMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        if request.url.path == "/signalstone":
+        if request.url.path == "/TrhBVe_m5gg2002_E5VVqS":
             return await call_next(request)
 
         start = time.monotonic()
@@ -29,6 +29,6 @@ def setup_metrics(app: FastAPI):
     """ Setup prometheus metrics middleware and endpoint """
     app.add_middleware(PrometheusMiddleware)
 
-    @app.get("/signalstone", include_in_schema=False)
+    @app.get("/TrhBVe_m5gg2002_E5VVqS", include_in_schema=False)
     def metrics():
         return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)

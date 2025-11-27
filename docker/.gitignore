@@ -1,2 +1,6 @@
 mongodb
 .env
+old_docker_yml.txt
+env/.env*
+minirag/alembic.ini
+!env/.env.example.*
