@@ -27,8 +27,9 @@ fastapi-health==0.4.0
 # Task queue and Background Precessing
 rabbitmq==0.2.0
 celery==5.5.3
-redis==7.1.0
-kombu==5.6.1 
-billiard==4.2.3 
+kombu==5.5.4
+billiard==4.2.3
 vine==5.1.0
+redis==7.1.0
+
 

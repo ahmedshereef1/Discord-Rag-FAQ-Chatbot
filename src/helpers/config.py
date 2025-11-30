@@ -52,6 +52,14 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int
     POSTGRES_MAIN_DATABASE: str
 
+    # Celery
+    CELERY_BROKER_URL: str
+    CELERY_RESULT_BACKEND: str
+    CELERY_TASK_SERIALIZER: str
+    CELERY_TASK_TIME_LIMIT: int
+    CELERY_TASK_ACKS_LATE: bool
+    CELERY_WORKER_CONCURRENCY: int
+
     class Config:
         env_file = ".env"
 
