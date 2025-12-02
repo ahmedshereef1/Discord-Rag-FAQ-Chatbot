@@ -78,7 +78,9 @@ celery_app = Celery(
     backend=settings.CELERY_RESULT_BACKEND,
     include=[
         'tasks.mail_service' ,
-        'tasks.file_processing'
+        'tasks.file_processing' ,
+        'tasks.data_indexing' , 
+        'tasks.process_workflow'
     ]
 )
 
@@ -104,6 +106,8 @@ celery_app.conf.update(
     task_routes = {
         'tasks.mail_service.send_email_reports': {'queue': 'mail_server_queue'},
         'tasks.file_processing.process_project_files': {'queue': 'file_processing_queue'},
+        'tasks.data_indexing.index_data_content': {'queue': 'data_indexing_queue'},
+        'tasks.process_workflow.process_and_push_workflow': {'queue': 'file_processing_queue'},
     }
 
 )
@@ -112,4 +116,5 @@ celery_app.conf.task_default_queue = 'default'
 
 
 
-# python -m celery -A celery_app.celery_app worker --queues=default,file_processing_queue --loglevel=info  # to run celery
+# python -m celery -A celery_app.celery_app worker --queues=default,file_processing_queue,data_indexing_queue --loglevel=info  # to run celery
+# python -m celery -A celery_app flower --config=flowerconfig.py  # to run flower monitoring tool

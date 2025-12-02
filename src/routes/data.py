@@ -14,6 +14,7 @@ from models.AssetModel import AssetModel
 from models.enums.AssetTypeEnum import AssetTypeEnum
 from controllers import NLPController
 from tasks.file_processing import process_project_files
+from tasks.process_workflow import process_and_push_workflow
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -233,5 +234,28 @@ async def process_data(request: Request,project_id: int,process_request: Process
         content={
             "signal": ResponseSingnals.PROCESSING_SUCCESS.value,
             "task_id": task.id
+        }
+    )
+
+
+@data_router.post("/process-and-push/{project_id}")
+async def process_and_push_endpoint(request: Request,project_id: int, process_request: ProcessRequest = Body(...)):
+
+    chunk_size = process_request.chunk_size
+    chunk_overlap = process_request.overlap_size
+    do_reset = process_request.do_reset
+
+    workflow_task = process_and_push_workflow.delay(
+        project_id=project_id,
+        file_id=process_request.file_id,
+        overlap_size=chunk_overlap,
+        chunk_size=chunk_size,
+        do_reset=do_reset
+    )
+
+    return JSONResponse(
+        content={
+            "signal": ResponseSingnals.PROCESS_AND_PUSH_WORKFLOW_STARTED.value,
+            "workflow_task_id": workflow_task.id
         }
     )

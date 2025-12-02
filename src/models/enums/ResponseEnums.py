@@ -20,3 +20,5 @@ class ResponseSingnals(Enum):
     VECTOTDB_SEARCH_SUCCESS = "Vector DB Search Success"
     RAG_ANSWER_ERROR = "Rag answer error"
     RAG_ANSWER_SUCCESS = "Rag answer success"
+    DATA_PUSH_TASK_READY = "Data push task is ready"
+    PROCESS_AND_PUSH_WORKFLOW_STARTED = "Process and push workflow started"
