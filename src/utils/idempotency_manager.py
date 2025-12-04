@@ -1,8 +1,8 @@
 import hashlib
 import json 
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from models.db_schemas.minirag.schemes.celery_task_execution import CeleryTaskExecution
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 class IdempotencyManager:
     
@@ -117,3 +117,24 @@ class IdempotencyManager:
         
         # Re-excute if task previously failed
         return True, existing_task
+    
+    async def cleanup_old_tasks(self, time_retention: int = 86400) -> int:
+        """
+        Delete old task records older than time_retention seconds.
+        Args:
+            time_retention: Time in seconds to retain tasks (default: 86400 = 24 hours)
+        Returns:
+            Number of deleted records
+        """
+        cutoff_time = datetime.now(timezone.utc) - timedelta(seconds=time_retention)
+        
+        session = self.db_client()
+        try:
+            stmt = delete(CeleryTaskExecution).where(
+                CeleryTaskExecution.created_at < cutoff_time
+            )
+            result = await session.execute(stmt)
+            await session.commit()
+            return result.rowcount
+        finally:
+            await session.close()

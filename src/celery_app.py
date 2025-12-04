@@ -80,7 +80,8 @@ celery_app = Celery(
         'tasks.mail_service' ,
         'tasks.file_processing' ,
         'tasks.data_indexing' , 
-        'tasks.process_workflow'
+        'tasks.process_workflow',
+        'tasks.maintenance'
     ]
 )
 
@@ -108,7 +109,18 @@ celery_app.conf.update(
         'tasks.file_processing.process_project_files': {'queue': 'file_processing_queue'},
         'tasks.data_indexing.index_data_content': {'queue': 'data_indexing_queue'},
         'tasks.process_workflow.process_and_push_workflow': {'queue': 'file_processing_queue'},
-    }
+        'tasks.maintenance.clean_celery_executation_table': {'queue': 'default'},
+    },
+
+    beat_schedule = {
+        'clean-old_task_records': {
+            'task': 'tasks.maintenance.clean_celery_executation_table',
+            'schedule': 86400.0,  # every 24 hours
+            'args': (),
+        }
+    },
+
+    timezone='UTC',
 
 )
 
@@ -117,4 +129,5 @@ celery_app.conf.task_default_queue = 'default'
 
 
 # python -m celery -A celery_app.celery_app worker --queues=default,file_processing_queue,data_indexing_queue --loglevel=info  # to run celery
+# python -m celery -A celery_app.celery_app beat --loglevel=info  # to run celery beat
 # python -m celery -A celery_app flower --config=flowerconfig.py  # to run flower monitoring tool
