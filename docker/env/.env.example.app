@@ -38,3 +38,12 @@ VECTOR_DB_PGVEC_INDEX_THRESHOLD = 100
 # ========================= Template Config =========================
 PRIMARY_LANG = "en"
 DEFAULT_LANG = "en"
+
+# ============================== Celery task queu Config =====================================
+CELERY_BROKER_URL="amqp://user_name:password@localhost:5672/your_host"
+CELERY_RESULT_BACKEND="redis://:password@localhost:6379/0"
+CELERY_TASK_SERIALIZER="json"
+CELERY_TASK_TIME_LIMIT=600
+CELERY_TASK_ACKS_LATE=false
+CELERY_WORKER_CONCURRENCY=2
+CELERY_FLOWER_PASSWORD=your_flower_password
