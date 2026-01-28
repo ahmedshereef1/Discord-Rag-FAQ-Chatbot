@@ -1,0 +1,10 @@
+langchain>=0.3.0
+langchain-community>=0.4.0
+langchain-cohere>=0.5.0
+langchain-huggingface>=0.1.0
+openai>=1.50.0
+unstructured>=0.16.0
+cohere>=5.0.0
+sentence-transformers>=2.2.0
+pymongo>=4.6.0
+langchain-mongodb>=0.2.0

@@ -25,6 +25,17 @@ class NLPController(BaseController):
 
     async def get_vector_db_collection_info(self, project: Project):
         collection_name = self.create_collection_name(project_id=project.project_id)
+        # Check if collection exists before querying
+        collection_exists = await self.vectordb_client.is_collection_exist(collection_name)
+        if not collection_exists:
+            logger.warning(f"Collection '{collection_name}' does not exist for project {project.project_id}")
+            return {
+                "collection_name": collection_name,
+                "exists": False,
+                "record_count": 0,
+                "message": "Collection not found - may need to index documents first"
+            }
+            
         collection_info = await self.vectordb_client.get_collection_info(collection_name=collection_name)
         
         def default_serializer(obj):

@@ -1,0 +1,23 @@
+This file involve some question for testing at notebook:
+
+AWS Questions (from Part 2: AWS Responsible Use of AI Guide)
+
+What is Responsible AI at AWS, and why is it important? 
+
+What are the four major phases of the AI lifecycle according to AWS? 
+
+What are the four phases of building responsible AI capabilities in an organization? 
+
+What are the main AI roles defined by AWS (developers, deployers, end users)? Explain each role. 
+
+What responsible AI dimensions does AWS recommend considering throughout the AI lifecycle? 
+
+What considerations apply to all phases of the AI lifecycle (team diversity, governance, compliance, etc.)? 
+
+In the design phase, how does AWS recommend assessing risks and identifying limitations? 
+
+In the development phase, what are AWS recommendations for training/testing data and adversarial testing? 
+
+In the deployment phase, how does AWS recommend monitoring and improving AI systems over time? 
+
+In the operate phase, what safeguards does AWS suggest (watermarking, guardrails, user notification)? 
