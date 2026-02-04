@@ -34,5 +34,7 @@ redis==7.1.0
 flower==2.0.1
 
 
-
+# Discord Bot
+discord.py>=2.3.2
+aiohttp
 
