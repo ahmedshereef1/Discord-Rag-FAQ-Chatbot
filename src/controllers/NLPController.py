@@ -166,9 +166,9 @@ class NLPController(BaseController):
         logger.info(f"Retrieved {len(retrieved_documents)} documents")
         
         # Log the first few retrieved docs to check relevance
-        for idx, doc in enumerate(retrieved_documents[:3]):
-            text_preview = str(doc.get("text", "") or doc.get("content", ""))[:200]
-            logger.debug(f"Doc {idx}: {text_preview}...")
+        #for idx, doc in enumerate(retrieved_documents[:3]):
+         #   text_preview = str(doc.get("text", "") or doc.get("content", ""))[:200]
+          #  logger.debug(f"Doc {idx}: {text_preview}...")
         
         # step 2 : construct LLM prompt
         system_prompt = self.template_parser.get(
@@ -195,6 +195,7 @@ class NLPController(BaseController):
             }
         )
 
+        # step3: Construct Generation Client Prompts
         chat_history = [
             self.generation_client.construct_prompt(
                 prompt=system_prompt,
@@ -207,104 +208,13 @@ class NLPController(BaseController):
         logger.info(f"Constructed prompt with {len(full_prompt)} characters")
         logger.debug(f"Prompt preview: {full_prompt[:500]}...")
         
-        # call generation client; handle awaitables and exceptions
-        try:
-            logger.info("Calling LLM generation client...")
-            gen_result = self.generation_client.generate_text(prompt=full_prompt,
-                                                            chat_history=chat_history)
-            if inspect.isawaitable(gen_result):
-                answer = await gen_result
-            else:
-                answer = gen_result
-            
-            # Check if answer is valid
-            if answer:
-                logger.info(f"LLM generated answer ({len(answer)} chars): {answer[:200]}...")
-            else:
-                logger.warning("LLM returned None or empty answer")
-                
-        except Exception as e:
-            logger.exception(f"Generation client raised an exception: {e}")
-            answer = None
-
-        # If generation failed or returned empty, use fallback
-        if not answer or answer.strip() == "":
-            logger.warning("LLM answer is empty, using fallback summarizer")
-            try:
-                answer = self._create_generic_summary(retrieved_documents, query)
-                logger.info(f"Fallback summary created: {answer[:200]}...")
-            except Exception as e:
-                logger.exception(f"Failed to create fallback summary: {e}")
-                answer = "I found relevant information in the documents, but I'm unable to generate a proper answer at this time. Please try rephrasing your question."
-
+        # step4: Retrieve the Answer
+        answer = self.generation_client.generate_text(
+            prompt=full_prompt,
+            chat_history=chat_history
+        )
+        
         return answer, full_prompt, chat_history
 
 
-    def _create_generic_summary(self, docs: list, query: str) -> str:
-        """
-        Create a well-formatted summary from retrieved documents.
-        This works for ANY topic, not just specific keywords.
-        """
-        import re
-        
-        if not docs:
-            return "No relevant information found in the documents."
-
-        # Extract all text from documents
-        all_texts = []
-        for doc in docs:
-            text = doc.get("text") or doc.get("content") or str(doc)
-            if text and len(text.strip()) > 20:
-                all_texts.append(text.strip())
-        
-        if not all_texts:
-            return "No readable content found in the retrieved documents."
-        
-        # Combine and clean the texts
-        combined = " ".join(all_texts[:5])  # Use top 5 chunks
-        
-        # Split into sentences
-        sentences = re.split(r'(?<=[.!?])\s+', combined)
-        
-        # Filter out very short or incomplete sentences
-        valid_sentences = []
-        for sent in sentences:
-            sent = sent.strip()
-            # Only include sentences that are substantial and complete
-            if len(sent) > 30 and (sent.endswith('.') or sent.endswith('!') or sent.endswith('?')):
-                valid_sentences.append(sent)
-        
-        if not valid_sentences:
-            # If no valid sentences, just return first chunk cleaned
-            return all_texts[0][:1000]
-        
-        # Group sentences into paragraphs (3-5 sentences per paragraph)
-        paragraphs = []
-        current_paragraph = []
-        
-        for i, sent in enumerate(valid_sentences[:15]):  # Use up to 15 sentences
-            current_paragraph.append(sent)
-            
-            # Create a new paragraph every 3-5 sentences
-            if len(current_paragraph) >= 3 and (i == len(valid_sentences) - 1 or len(current_paragraph) >= 5):
-                paragraphs.append(" ".join(current_paragraph))
-                current_paragraph = []
-        
-        # Add any remaining sentences
-        if current_paragraph:
-            paragraphs.append(" ".join(current_paragraph))
-        
-        # Join paragraphs with double newlines for better readability
-        formatted_answer = "\n\n".join(paragraphs)
-        
-        # Ensure the answer isn't too long (max ~2000 chars)
-        if len(formatted_answer) > 2000:
-            # Truncate at last complete sentence
-            truncated = formatted_answer[:2000]
-            last_period = truncated.rfind('.')
-            if last_period > 1500:
-                formatted_answer = truncated[:last_period + 1]
-            else:
-                formatted_answer = truncated + "..."
-        
-        return formatted_answer
+    
